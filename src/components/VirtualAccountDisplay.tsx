@@ -297,7 +297,7 @@ export function VirtualAccountDisplay({
             <Button
               variant="secondary"
               onClick={handleSimulatePayment}
-              disabled={isSimulating || isPolling}
+              disabled={isSimulating}
               className="w-full"
             >
               {isSimulating ? "Simulating Payment..." : "Simulate Payment"}
