@@ -286,7 +286,7 @@ export function VirtualAccountDisplay({
         )}
 
         {/* Development Testing Section */}
-        {process.env.NODE_ENV === "development" &&
+        {process.env.NODE_ENV === "production" &&
           paymentStatus === "pending" && (
             <div className="bg-gray-50 p-4 rounded-lg border-dashed border-2 border-gray-200">
               <h4 className="font-semibold text-gray-700 mb-2">
