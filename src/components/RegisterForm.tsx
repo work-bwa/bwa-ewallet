@@ -36,6 +36,16 @@ export function RegisterForm() {
         password: data.password,
         name: data.name,
       });
+      // Create wallet otomatis setelah register berhasil
+      const walletResponse = await fetch("/api/wallet/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!walletResponse.ok) {
+        console.error("Failed to create wallet");
+        // Tidak perlu throw error, wallet bisa dibuat nanti
+      }
       toast.success("Registrasi berhasil!");
       router.push("/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

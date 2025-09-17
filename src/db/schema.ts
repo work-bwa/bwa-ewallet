@@ -23,3 +23,19 @@ export const transactions = pgTable("transactions", {
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }).enableRLS();
+
+export const payments = pgTable("payments", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  externalId: text("external_id").notNull().unique(), // ID unik untuk Xendit
+  xenditId: text("xendit_id"), // ID dari response Xendit
+  paymentMethod: text("payment_method").notNull(), // "va", "ewallet", "qris"
+  amount: integer("amount").notNull(),
+  status: text("status").default("pending").notNull(), // "pending", "paid", "expired", "failed"
+  virtualAccountNumber: text("virtual_account_number"),
+  ewalletUrl: text("ewallet_url"), // URL redirect untuk e-wallet
+  paidAt: timestamp("paid_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}).enableRLS();
