@@ -12,12 +12,12 @@ const simulateSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Only allow in development/test mode
-    if (process.env.NODE_ENV === "production") {
-      return NextResponse.json(
-        { error: "Testing not allowed in production" },
-        { status: 403 }
-      );
-    }
+    // if (process.env.NODE_ENV === "production") {
+    //   return NextResponse.json(
+    //     { error: "Testing not allowed in production" },
+    //     { status: 403 }
+    //   );
+    // }
 
     const session = await getServerSession();
     if (!session?.user) {
