@@ -25,13 +25,15 @@ export function QuickActions() {
         </Button>
       </Link>
 
-      <Button
-        variant="outline"
-        className="h-20 flex-col space-y-2 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95"
-      >
-        <History className="h-6 w-6" />
-        <span className="text-sm font-medium">Riwayat</span>
-      </Button>
+      <Link href="/dashboard/history">
+        <Button
+          variant="outline"
+          className="h-20 w-full flex-col space-y-2 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95"
+        >
+          <History className="h-6 w-6" />
+          <span className="text-sm font-medium">Riwayat</span>
+        </Button>
+      </Link>
     </div>
   );
 }
