@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { transactions, wallets, payments } from "@/db/schema";
-import { eq, desc, and, gte, lte, like, or } from "drizzle-orm";
+import { eq, desc, and, gte, lte, like, or, SQL } from "drizzle-orm";
 import { getServerSession } from "@/lib/get-session";
 
 export interface TransactionDetail {
@@ -40,8 +40,10 @@ export async function getTransactionHistory(filters: HistoryFilters = {}) {
       return { success: false, error: "Wallet not found", data: [] };
     }
 
-    // Build where conditions
-    const conditions = [eq(transactions.walletId, userWallet.id)];
+    // Build where conditions (allow undefined)
+    const conditions: (SQL<unknown> | undefined)[] = [
+      eq(transactions.walletId, userWallet.id),
+    ];
 
     if (filters.startDate) {
       conditions.push(gte(transactions.createdAt, filters.startDate));
@@ -64,25 +66,26 @@ export async function getTransactionHistory(filters: HistoryFilters = {}) {
       );
     }
 
-    // Query transactions
+    // Combine safely
+    const whereClause = and(...conditions.filter(Boolean))!;
+
     const transactionList = await db
       .select()
       .from(transactions)
-      .where(and(...conditions))
+      .where(whereClause)
       .orderBy(desc(transactions.createdAt))
       .limit(filters.limit || 50)
       .offset(filters.offset || 0);
 
-    // Get payment details untuk transaksi topup
+    // Get payment details
     const paymentDetails = await db
       .select()
       .from(payments)
       .where(eq(payments.userId, session.user.id));
 
-    // Combine data dan format
+    // Format hasil
     const formattedTransactions: TransactionDetail[] = transactionList.map(
       (tx) => {
-        // Cari payment detail jika type topup
         const paymentDetail =
           tx.type === "topup"
             ? paymentDetails.find((p) => p.amount === Math.abs(tx.amount))
@@ -111,53 +114,6 @@ export async function getTransactionHistory(filters: HistoryFilters = {}) {
       success: false,
       error: "Failed to fetch transaction history",
       data: [],
-    };
-  }
-}
-
-export async function getTransactionById(transactionId: string) {
-  try {
-    const session = await getServerSession();
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized", data: null };
-    }
-
-    const userWallet = await db.query.wallets.findFirst({
-      where: eq(wallets.userId, session.user.id),
-    });
-
-    if (!userWallet) {
-      return { success: false, error: "Wallet not found", data: null };
-    }
-
-    const transaction = await db.query.transactions.findFirst({
-      where: and(
-        eq(transactions.id, transactionId),
-        eq(transactions.walletId, userWallet.id)
-      ),
-    });
-
-    if (!transaction) {
-      return { success: false, error: "Transaction not found", data: null };
-    }
-
-    return {
-      success: true,
-      data: {
-        id: transaction.id,
-        amount: transaction.amount,
-        type: transaction.type,
-        description: transaction.description,
-        createdAt: transaction.createdAt,
-        reference: transaction.id,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching transaction detail:", error);
-    return {
-      success: false,
-      error: "Failed to fetch transaction detail",
-      data: null,
     };
   }
 }
