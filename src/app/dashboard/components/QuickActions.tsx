@@ -15,13 +15,15 @@ export function QuickActions() {
         </Button>
       </Link>
 
-      <Button
-        variant="outline"
-        className="h-20 flex-col space-y-2 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95"
-      >
-        <Send className="h-6 w-6" />
-        <span className="text-sm font-medium">Transfer</span>
-      </Button>
+      <Link href="/dashboard/transfer">
+        <Button
+          variant="outline"
+          className="h-20 w-full flex-col space-y-2 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95"
+        >
+          <Send className="h-6 w-6" />
+          <span className="text-sm font-medium">Transfer</span>
+        </Button>
+      </Link>
 
       <Button
         variant="outline"
