@@ -25,7 +25,7 @@ export default async function TopUpPage() {
             </Link>
             <h1 className="text-2xl font-bold">Top Up Saldo</h1>
           </div>
-          <TopUpForm />
+          <TopUpForm userId={session.user.id} />
         </div>
       </div>
     </div>

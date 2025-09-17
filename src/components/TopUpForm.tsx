@@ -27,7 +27,11 @@ export interface VirtualAccountData {
   externalId: string;
 }
 
-export function TopUpForm() {
+interface TopUpFormProps {
+  userId: string;
+}
+
+export function TopUpForm({ userId }: TopUpFormProps) {
   const [virtualAccountData, setVirtualAccountData] =
     useState<VirtualAccountData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -97,6 +101,7 @@ export function TopUpForm() {
       <VirtualAccountDisplay
         data={virtualAccountData}
         onBack={() => setVirtualAccountData(null)}
+        userId={userId}
       />
     );
   }
