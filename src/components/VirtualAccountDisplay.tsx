@@ -286,28 +286,27 @@ export function VirtualAccountDisplay({
         )}
 
         {/* Development Testing Section */}
-        {process.env.NODE_ENV === "production" &&
-          paymentStatus === "pending" && (
-            <div className="bg-gray-50 p-4 rounded-lg border-dashed border-2 border-gray-200">
-              <h4 className="font-semibold text-gray-700 mb-2">
-                Development Testing
-              </h4>
-              <p className="text-sm text-gray-600 mb-3">
-                Simulate payment untuk testing tanpa transfer sungguhan
-              </p>
-              <Button
-                variant="secondary"
-                onClick={handleSimulatePayment}
-                disabled={isSimulating || isPolling}
-                className="w-full"
-              >
-                {isSimulating ? "Simulating Payment..." : "Simulate Payment"}
-              </Button>
-              <p className="text-xs text-gray-500 mt-2">
-                Hanya tersedia dalam development mode
-              </p>
-            </div>
-          )}
+        {paymentStatus === "pending" && (
+          <div className="bg-gray-50 p-4 rounded-lg border-dashed border-2 border-gray-200">
+            <h4 className="font-semibold text-gray-700 mb-2">
+              Development Testing
+            </h4>
+            <p className="text-sm text-gray-600 mb-3">
+              Simulate payment untuk testing tanpa transfer sungguhan
+            </p>
+            <Button
+              variant="secondary"
+              onClick={handleSimulatePayment}
+              disabled={isSimulating || isPolling}
+              className="w-full"
+            >
+              {isSimulating ? "Simulating Payment..." : "Simulate Payment"}
+            </Button>
+            <p className="text-xs text-gray-500 mt-2">
+              Hanya tersedia dalam development mode
+            </p>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="space-y-2">
