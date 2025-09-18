@@ -9,6 +9,8 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Email tidak valid" }),
@@ -18,6 +20,7 @@ const loginSchema = z.object({
 type LoginFormType = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -30,6 +33,7 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormType) => {
     try {
+      setIsLoading(true);
       const result = await authClient.signIn.email({
         email: data.email,
         password: data.password,
@@ -43,6 +47,8 @@ export function LoginForm() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.message || "Login gagal");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,8 +68,9 @@ export function LoginForm() {
           <p className="text-red-600">{errors.password.message}</p>
         )}
       </div>
-      <Button type="submit" className="w-full mt-4">
-        Login
+      <Button type="submit" className="w-full mt-4" disabled={isLoading}>
+        {isLoading && <Loader2 className="animate-spin" />}
+        {isLoading ? "Login..." : "Login"}
       </Button>
 
       <Link href="/register" className="flex gap-2 justify-center mt-4">

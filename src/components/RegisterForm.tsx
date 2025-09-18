@@ -9,6 +9,8 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const registerSchema = z.object({
   name: z.string().min(3, { message: "Nama minimal 3 karakter" }),
@@ -19,6 +21,7 @@ const registerSchema = z.object({
 type RegisterFormType = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -31,11 +34,18 @@ export function RegisterForm() {
 
   const onSubmit = async (data: RegisterFormType) => {
     try {
-      await authClient.signUp.email({
+      setIsLoading(true);
+      const result = await authClient.signUp.email({
         email: data.email,
         password: data.password,
         name: data.name,
       });
+
+      if (result.error) {
+        toast.info(result.error.message);
+        return;
+      }
+
       // Create wallet otomatis setelah register berhasil
       const walletResponse = await fetch("/api/wallet/create", {
         method: "POST",
@@ -51,6 +61,8 @@ export function RegisterForm() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.message || "Registrasi gagal");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,8 +86,9 @@ export function RegisterForm() {
           <p className="text-red-600">{errors.password.message}</p>
         )}
       </div>
-      <Button type="submit" className="w-full mt-4">
-        Daftar
+      <Button type="submit" className="w-full mt-4" disabled={isLoading}>
+        {isLoading && <Loader2 className="animate-spin" />}
+        {isLoading ? "Mendaftar..." : "Daftar"}
       </Button>
 
       <Link href="/login" className="flex gap-2 justify-center mt-4">
